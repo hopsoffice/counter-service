@@ -92,7 +92,7 @@ if __name__ == "__main__":
     )
     logger.info("App initialized.")
     logger.info("Starting server...")
-    uvicorn_run(app)
+    uvicorn_run(app, host="0.0.0.0")
     logger.info("Server finished.")
     loop.run_until_complete(cleanup())
     logger.info("Database connection disposed.")
