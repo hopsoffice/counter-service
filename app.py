@@ -2,7 +2,6 @@ import asyncio
 import functools
 import json
 import logging
-import signal
 import sys
 import typing
 
@@ -14,6 +13,7 @@ from starlette.applications import Starlette
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette.routing import Route
+from uvicorn import run as uvicorn_run
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -91,18 +91,8 @@ if __name__ == "__main__":
         ]
     )
     logger.info("App initialized.")
-
-    class GracefulExit(SystemExit):
-        pass
-
-    def raise_graceful_exit():
-        raise GracefulExit
-
-    for sig in {signal.SIGINT, signal.SIGTERM}:
-        loop.add_signal_handler(sig, raise_graceful_exit)
-    try:
-        loop.run_forever()
-    except GracefulExit:
-        logger.info("Exiting counter gracefully...")
-    finally:
-        loop.run_until_complete(cleanup())
+    logger.info("Starting server...")
+    uvicorn_run(app)
+    logger.info("Server finished.")
+    loop.run_until_complete(cleanup())
+    logger.info("Database connection disposed.")
