@@ -5,4 +5,4 @@ echo "Running black..."
 black --line-length 79 --check app.py
 echo "Running isort..."
 isort --line-length 79 --check --diff app.py
-echo "Everythinks okay."
+echo "Everythings okay."
