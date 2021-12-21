@@ -1,13 +1,16 @@
 import asyncio
+import json
 import logging
 import signal
 import sys
 import typing
 
-from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.schema import Column
 from sqlalchemy.types import Integer, UnicodeText
+from starlette.requests import Request
+from starlette.responses import JSONResponse
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -40,6 +43,30 @@ async def initialize_database() -> typing.Callable[[], None]:
             logger.exception("Ignoring exception during disposing engine.")
 
     return cleanup
+
+
+async def count_number(
+    make_session: typing.Callable[[], AsyncSession], request: Request
+) -> JSONResponse:
+    try:
+        request_body = await request.json()
+    except json.decoder.JSONDecodeError:
+        request_body = {}
+    new_count = Count(memo=request_body.get("memo"))
+    try:
+        async with make_session() as session:
+            async with session.begin():
+                session.add(new_count)
+                session.commit()
+    except Exception as e:
+        return JSONResponse({"success": False, "error": str(e)})
+    else:
+        return JSONResponse(
+            {
+                "success": True,
+                "data": {"number": new_count.number, "memo": new_count.memo},
+            }
+        )
 
 
 if __name__ == "__main__":
