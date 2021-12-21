@@ -37,7 +37,9 @@ class Count(Base):
 async def initialize_database() -> typing.Tuple[
     typing.Callable[[], AsyncSession], typing.Callable[[], None]
 ]:
-    engine = create_async_engine("sqlite+aiosqlite:///counter.db", echo=True)
+    engine = create_async_engine(
+        "sqlite+aiosqlite:///db/counter.db", echo=True
+    )
     async with engine.begin() as connection:
         await connection.run_sync(Base.metadata.create_all)
 
