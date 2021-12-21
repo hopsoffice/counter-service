@@ -6,6 +6,12 @@ authors = ["Ahn Kiwook <bright@hopsoffice.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
+SQLAlchemy = {version = "^1.4.28", extras = ["asyncio"]}
+black = "^21.12b0"
+isort = "^5.10.1"
+flake8 = "^4.0.1"
+aiosqlite = "^0.17.0"
+greenlet = "^1.1.2"
 
 [tool.poetry.dev-dependencies]
 
